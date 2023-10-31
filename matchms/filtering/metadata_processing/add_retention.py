@@ -47,33 +47,35 @@ def _safe_convert_to_float(value: Any) -> Optional[float]:
     -------
     Converted float value or 'None' if conversion is not possible.
     """
-    if isinstance(value, list):
-        if len(value) == 1:
-            value = value[0]
-        else:
-            return None
-
-    # logic to read MoNA msp files which specify rt as string with "min" in it
-    if isinstance(value, str):
-        value = value.strip()
-        pattern = r'^[+-]?(\d*\.)?\d+\s*(min|s|h|ms)'
-        conversion = {"min": 60, "sec": 1, "s": 1, "h": 3600, "ms": 1e-3}
-        match = re.search(pattern, value)
-
-        if match and len(match.groups()) == 2:
-            val, unit = value.split(' ')
-            try:
-                return float(val) * conversion[unit]
-            except:
-                return None
     try:
-        value = float(value)
-        rt = value if value >= 0 else None  # discard negative RT values
-    except (ValueError, TypeError):
-        logger.warning("%s can't be converted to float.", str(value))
-        rt = None
-    return rt
-
+        if isinstance(value, list):
+            if len(value) == 1:
+                value = value[0]
+            else:
+                return None
+    
+        # logic to read MoNA msp files which specify rt as string with "min" in it
+        if isinstance(value, str):
+            value = value.strip()
+            pattern = r'^[+-]?(\d*\.)?\d+\s*(min|s|h|ms)'
+            conversion = {"min": 60, "sec": 1, "s": 1, "h": 3600, "ms": 1e-3}
+            match = re.search(pattern, value)
+    
+            if match and len(match.groups()) == 2:
+                val, unit = value.split(' ')
+                try:
+                    return float(val) * conversion[unit]
+                except:
+                    return None
+        try:
+            value = float(value)
+            rt = value if value >= 0 else None  # discard negative RT values
+        except (ValueError, TypeError):
+            logger.warning("%s can't be converted to float.", str(value))
+            rt = None
+        return rt
+    except:
+        return None
 
 def _add_retention(metadata: dict, target_key: str, accepted_keys: List[str]) -> dict:
     """Add value from one of accepted keys to target key.
