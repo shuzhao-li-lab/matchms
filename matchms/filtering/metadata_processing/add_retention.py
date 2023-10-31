@@ -57,12 +57,15 @@ def _safe_convert_to_float(value: Any) -> Optional[float]:
     if isinstance(value, str):
         value = value.strip()
         pattern = r'^[+-]?(\d*\.)?\d+\s*(min|s|h|ms)'
-        conversion = {"min": 60, "s": 1, "h": 3600, "ms": 1e-3}
+        conversion = {"min": 60, "sec": 1, "s": 1, "h": 3600, "ms": 1e-3}
         match = re.search(pattern, value)
 
         if match and len(match.groups()) == 2:
             val, unit = value.split(' ')
-            return float(val) * conversion[unit]
+            try:
+                return float(val) * conversion[unit]
+            except:
+                return None
     try:
         value = float(value)
         rt = value if value >= 0 else None  # discard negative RT values
