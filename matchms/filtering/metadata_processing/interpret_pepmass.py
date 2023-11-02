@@ -31,11 +31,22 @@ def _interpret_pepmass_metadata(metadata):
     pepmass = metadata.get("pepmass")
     if pepmass is None:
         return metadata
-
-    mz, intensity, charge = _get_mz_intensity_charge(pepmass)
-    mz = _convert_mz_or_intensity(mz)
-    intensity = _convert_mz_or_intensity(intensity)
-    charge = _convert_charge_to_int(charge)
+    try:
+        mz, intensity, charge = _get_mz_intensity_charge(pepmass)
+    except:
+        pass
+    try:
+        mz = _convert_mz_or_intensity(mz)
+    except:
+        pass
+    try:
+        intensity = _convert_mz_or_intensity(intensity)
+    except:
+        pass
+    try:
+        charge = _convert_charge_to_int(charge)
+    except:
+        pass
 
     if mz is not None:
         if metadata.get("precursor_mz") is not None\
@@ -58,9 +69,11 @@ def _interpret_pepmass_metadata(metadata):
                            metadata.get("charge"), str(charge))
         metadata["charge"] = charge
         logger.info("Added charge entry based on field 'pepmass'.")
-
-    del metadata["pepmass"]
-    logger.info("Removed pepmass, since the information was added to other fields")
+    try:
+        del metadata["pepmass"]
+        logger.info("Removed pepmass, since the information was added to other fields")
+    except:
+        pass
     return metadata
 
 
