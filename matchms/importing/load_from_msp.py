@@ -48,11 +48,13 @@ def load_from_msp(filename: str,
             idx_sorted = np.argsort(mz)
             mz = mz[idx_sorted]
             intensities = intensities[idx_sorted]
-
-        yield Spectrum(mz=mz,
-                       intensities=intensities,
-                       metadata=metadata,
-                       metadata_harmonization=metadata_harmonization)
+        try:
+            yield Spectrum(mz=mz,
+                           intensities=intensities,
+                           metadata=metadata,
+                           metadata_harmonization=metadata_harmonization)
+        except:
+            yield None
 
 
 def parse_msp_file(filename: str) -> Generator[dict, None, None]:
