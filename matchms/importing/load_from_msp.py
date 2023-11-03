@@ -36,19 +36,19 @@ def load_from_msp(filename: str,
     """
 
     for spectrum in parse_msp_file(filename):
-        metadata = spectrum.get("params", None)
-        mz = spectrum["m/z array"]
-        intensities = spectrum["intensity array"]
-        peak_comments = spectrum["peak comments"]
-        if peak_comments != {}:
-            metadata["peak_comments"] = peak_comments
-
-        # Sort by mz (if not sorted already)
-        if not np.all(mz[:-1] <= mz[1:]):
-            idx_sorted = np.argsort(mz)
-            mz = mz[idx_sorted]
-            intensities = intensities[idx_sorted]
         try:
+            metadata = spectrum.get("params", None)
+            mz = spectrum["m/z array"]
+            intensities = spectrum["intensity array"]
+            peak_comments = spectrum["peak comments"]
+            if peak_comments != {}:
+                metadata["peak_comments"] = peak_comments
+    
+            # Sort by mz (if not sorted already)
+            if not np.all(mz[:-1] <= mz[1:]):
+                idx_sorted = np.argsort(mz)
+                mz = mz[idx_sorted]
+                intensities = intensities[idx_sorted]
             yield Spectrum(mz=mz,
                            intensities=intensities,
                            metadata=metadata,
